@@ -38,6 +38,7 @@ public class ResourceManager {
 	public ITiledTextureRegion mTiledTextureRegion;
 	//public ITextureRegion mSpriteTextureRegion;
 
+	public static String fontName = "go3v2.ttf";
 	
 	public Sound mSound;
 
@@ -105,6 +106,7 @@ public class ResourceManager {
 	}
 	
 	
+	
 	// Se crea un método de load/unload para cada escena:
 	
 /*	 Similar to the loadGameTextures(...) method, except this method will be
@@ -166,15 +168,17 @@ public class ResourceManager {
 		if(!mSound.isReleased())mSound.release();
 	}
 	
+	
 	/* Lastly, we've got the loadFonts method which, once again,
 	 * tends to only need to be loaded once as Font's are generally 
 	 * used across an entire game, from menu to shop to game-play.
 	 */
-	public synchronized void loadFonts(Engine pEngine){
+	public synchronized void loadFonts(Engine pEngine, MainActivity pContext){
 		FontFactory.setAssetBasePath("fonts/");
 		
 		// Create mFont object via FontFactory class
-		mFont = FontFactory.create(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),  32f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
+		mFont = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
+				pContext.getAssets(), fontName, 32f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
 
 		mFont.load();
 	}
