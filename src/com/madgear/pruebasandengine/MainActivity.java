@@ -9,9 +9,12 @@ import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.util.FPSLogger;
 
 import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.util.adt.align.HorizontalAlign;
 
 
 public class MainActivity extends BaseGameActivity {
@@ -84,6 +87,7 @@ public class MainActivity extends BaseGameActivity {
 		
 
 		ResourceManager.getInstance().loadGameTextures(mEngine, this);
+		ResourceManager.getInstance().loadFonts(mEngine, this);
 		
 		
 		/* We should notify the pOnCreateResourcesCallback that we've finished
@@ -149,6 +153,14 @@ public class MainActivity extends BaseGameActivity {
 		animatedSprite.animate(frameDuration, firstTileIndex, lastTileIndex, loopAnimation);
 		
 		mScene.attachChild(animatedSprite);	
+		
+		
+		// Añadimos algo de texto:
+		final Text centerText = new Text(WIDTH * 0.5f, HEIGHT *0.5f, ResourceManager.getInstance().mFont,
+				"Pruebas para las fuentes\nAqui la otra linea...    :D",
+				new TextOptions(HorizontalAlign.CENTER), mEngine.getVertexBufferObjectManager());
+		
+		mScene.attachChild(centerText);
 		
 		
 		// onPopulateSceneFinished(), similar to the resource and scene callback
