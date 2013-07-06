@@ -10,15 +10,7 @@ import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.util.FPSLogger;
-import org.andengine.opengl.texture.TextureOptions;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
-import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
-import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
-import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.texture.region.ITiledTextureRegion;
+
 import org.andengine.ui.activity.BaseGameActivity;
 
 
@@ -34,15 +26,6 @@ public class MainActivity extends BaseGameActivity {
 	
 	// Declare a Scene object for our activity
 	private Scene mScene;
-	
-	
-	///
-	BuildableBitmapTextureAtlas mBitmapTextureAtlas;
-	ITextureRegion mSpriteTextureRegion;
-	ITiledTextureRegion mTiledTextureRegion;
-	
-	
-	
 	
 	
 	
@@ -99,29 +82,8 @@ public class MainActivity extends BaseGameActivity {
 	public void onCreateResources(
 			OnCreateResourcesCallback pOnCreateResourcesCallback) {
 		
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		
-		/* Create the bitmap texture atlas for the sprite's texture
-		region */
-		BuildableBitmapTextureAtlas mBitmapTextureAtlas =
-				new BuildableBitmapTextureAtlas(mEngine.getTextureManager(), 1548, 332, TextureOptions.BILINEAR);
-		
-		/* Create the TiledTextureRegion object, passing in the usual
-		parameters, as well as the number of rows and columns in our sprite sheet
-		for the final two parameters */
-		// 6 = nº de imágenes que tiene la animación :D
-		mTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, this, "sprite1.png", 6, 1);
-		
-		/* Build the bitmap texture atlas */
-		try {
-			mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
-		} catch (TextureAtlasBuilderException e) {
-			e.printStackTrace();
-		}
-		
-		/* Load the bitmap texture atlas into the device's gpu memory
-		*/
-		mBitmapTextureAtlas.load();
+
+		ResourceManager.getInstance().loadGameTextures(mEngine, this);
 		
 		
 		/* We should notify the pOnCreateResourcesCallback that we've finished
@@ -171,14 +133,14 @@ public class MainActivity extends BaseGameActivity {
 
 		/* Create a new animated sprite in the center of the scene */
 		AnimatedSprite animatedSprite = new AnimatedSprite(WIDTH * 0.5f, HEIGHT * 0.5f,
-				mTiledTextureRegion, mEngine.getVertexBufferObjectManager());
+				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager());
 		
 		/* Length to play each frame before moving to the next */
 		long frameDuration[] = { 50	, 100, 150 , 200, 250, 300 };
 		
 		/* We can define the indices of the animation to play between */
 		int firstTileIndex = 0;
-		int lastTileIndex = mTiledTextureRegion.getTileCount() - 1;
+		int lastTileIndex = ResourceManager.getInstance().mTiledTextureRegion.getTileCount() - 1;
 		
 		/* Allow the animation to continuously loop? */
 		boolean loopAnimation = true;
@@ -193,6 +155,14 @@ public class MainActivity extends BaseGameActivity {
 		// methods, should be called once we are finished populating the scene.
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 	}
+	
+	
+	// Liberamos la memoria:
+	 public void onUnloadResources () {
+		 ResourceManager.getInstance().unloadGameTextures();
+		 
+	 }
+	
 }
 
 
