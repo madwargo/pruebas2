@@ -27,6 +27,9 @@ import android.util.Log;
 
 public class ResourceManager {
 
+	MainActivity activity;
+	Engine engine;
+	
 	// ResourceManager Singleton instance
 	private static ResourceManager INSTANCE;
 	
@@ -44,6 +47,29 @@ public class ResourceManager {
 
 	public Font	mFont;
 
+	
+	// Inicializa el manejador
+	public static void setup(MainActivity pActivity, Engine pEngine, Context pContext, 
+			float pCameraWidth, float pCameraHeight, float pCameraScaleX, float pCameraScaleY){
+		
+		getInstance().activity = pActivity;
+		getInstance().engine = pEngine; 
+		
+/*		
+		getInstance().context = pContext;
+		getInstance().cameraWidth = pCameraWidth;
+		getInstance().cameraHeight = pCameraHeight;
+		getInstance().cameraScaleFactorX = pCameraScaleX;
+		getInstance().cameraScaleFactorY = pCameraScaleY;*/
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	ResourceManager(){
 		// The constructor is of no use to us
 	}
@@ -173,12 +199,12 @@ public class ResourceManager {
 	 * tends to only need to be loaded once as Font's are generally 
 	 * used across an entire game, from menu to shop to game-play.
 	 */
-	public synchronized void loadFonts(Engine pEngine, MainActivity pContext){
+	public synchronized void loadFonts(Engine pEngine){
 		FontFactory.setAssetBasePath("fonts/");
 		
 		// Create mFont object via FontFactory class
 		mFont = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
-				pContext.getAssets(), fontName, 32f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
+				activity.getAssets(), fontName, 32f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
 
 		mFont.load();
 	}

@@ -26,14 +26,14 @@ public class MainActivity extends BaseGameActivity {
 
 	// Declare a Camera object for our activity
 	private Camera mCamera;
-	
+
 	// Declare a Scene object for our activity
 	private Scene mScene;
-	
-	
-	
-	
-	
+
+
+
+
+
 	/*
 	 * The onCreateEngineOptions method is responsible for creating the options to be
 	 * applied to the Engine object once it is created. The options include,
@@ -57,26 +57,26 @@ public class MainActivity extends BaseGameActivity {
 		// wake lock options in order to disable the device's display
 		// from turning off during gameplay due to inactivity
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
-		
+
 		// Return the engineOptions object, passing it to the engine
 		return engineOptions;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) {
 		return new LimitedFPSEngine(pEngineOptions, 60);
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	/*
 	 * The onCreateResources method is in place for resource loading, including textures,
 	 * sounds, and fonts for the most part. 
@@ -84,23 +84,26 @@ public class MainActivity extends BaseGameActivity {
 	@Override
 	public void onCreateResources(
 			OnCreateResourcesCallback pOnCreateResourcesCallback) {
-		
+
+		// Setup the ResourceManager.
+		ResourceManager.setup(this, this.getEngine(), this.getApplicationContext(),
+				WIDTH, HEIGHT, 0,0);
 
 		ResourceManager.getInstance().loadGameTextures(mEngine, this);
-		ResourceManager.getInstance().loadFonts(mEngine, this);
-		
-		
+		ResourceManager.getInstance().loadFonts(mEngine);
+
+
 		/* We should notify the pOnCreateResourcesCallback that we've finished
 		 * loading all of the necessary resources in our game AFTER they are loaded.
 		 * onCreateResourcesFinished() should be the last method called.  */
 		pOnCreateResourcesCallback.onCreateResourcesFinished();
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	/* The onCreateScene method is in place to handle the scene initialization and setup.
 	 * In this method, we must at least *return our mScene object* which will then 
 	 * be set as our main scene within our Engine object (handled "behind the scenes").
@@ -109,23 +112,23 @@ public class MainActivity extends BaseGameActivity {
 	 */
 	@Override
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) {
-		
+
 		mEngine.registerUpdateHandler(new FPSLogger());
-		
+
 		// Create the Scene object
 		mScene = new Scene();
 		mScene.getBackground().setColor(0.09804f, 0.6274f, 0.8784f);
-				
+
 		// Notify the callback that we're finished creating the scene, returning
 		// mScene to the mEngine object (handled automatically)
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	/* The onPopulateScene method was introduced to AndEngine as a way of separating
 	 * scene-creation from scene population. This method is in place for attaching 
 	 * child entities to the scene once it has already been returned to the engine and
@@ -138,43 +141,52 @@ public class MainActivity extends BaseGameActivity {
 		/* Create a new animated sprite in the center of the scene */
 		AnimatedSprite animatedSprite = new AnimatedSprite(WIDTH * 0.5f, HEIGHT * 0.5f,
 				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager());
-		
+
 		/* Length to play each frame before moving to the next */
 		long frameDuration[] = { 50	, 100, 150 , 200, 250, 300 };
-		
+
 		/* We can define the indices of the animation to play between */
 		int firstTileIndex = 0;
 		int lastTileIndex = ResourceManager.getInstance().mTiledTextureRegion.getTileCount() - 1;
-		
+
 		/* Allow the animation to continuously loop? */
 		boolean loopAnimation = true;
 
 		/* Animate the sprite with the data as set defined above */
 		animatedSprite.animate(frameDuration, firstTileIndex, lastTileIndex, loopAnimation);
-		
+
 		mScene.attachChild(animatedSprite);	
-		
-		
+
+
 		// Añadimos algo de texto:
-		final Text centerText = new Text(WIDTH * 0.5f, HEIGHT *0.5f, ResourceManager.getInstance().mFont,
+		final Text centerText = new Text(WIDTH * 0.5f, HEIGHT *0.3f, ResourceManager.getInstance().mFont,
 				"Pruebas para las fuentes\nAqui la otra linea...    :D",
 				new TextOptions(HorizontalAlign.CENTER), mEngine.getVertexBufferObjectManager());
-		
+
 		mScene.attachChild(centerText);
-		
-		
+
+
 		// onPopulateSceneFinished(), similar to the resource and scene callback
 		// methods, should be called once we are finished populating the scene.
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 	}
-	
-	
+
+
 	// Liberamos la memoria:
-	 public void onUnloadResources () {
-		 ResourceManager.getInstance().unloadGameTextures();
-		 ResourceManager.getInstance().unloadFonts();
-	 }
-	
+	public void onUnloadResources () {
+		ResourceManager.getInstance().unloadGameTextures();
+		ResourceManager.getInstance().unloadFonts();
+	}
+
+
+// Esto finaliza el juego:
+/*	// Some devices do not exit the game when the activity is destroyed.
+	// This ensures that the game is closed.
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		System.exit(0);
+	}*/
 }
 
 
