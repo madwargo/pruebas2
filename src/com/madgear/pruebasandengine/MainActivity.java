@@ -7,22 +7,26 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
+import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.input.touch.TouchEvent;
 
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.adt.align.HorizontalAlign;
 
 
-public class MainActivity extends BaseGameActivity {
+
+public class MainActivity extends BaseGameActivity implements IOnSceneTouchListener {
 
 	// The following constants will be used to define the width and height
 	// of our game's camera view
-	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 600;
+	private static final int WIDTH = 1920;		// Ouya res.
+	private static final int HEIGHT = 1080;		// Ouya res.
 
 	// Declare a Camera object for our activity
 	private Camera mCamera;
@@ -30,7 +34,7 @@ public class MainActivity extends BaseGameActivity {
 	// Declare a Scene object for our activity
 	private Scene mScene;
 
-
+	AnimatedSprite animatedSpriteClon;
 
 
 
@@ -50,7 +54,7 @@ public class MainActivity extends BaseGameActivity {
 		EngineOptions engineOptions = new EngineOptions(
 				true,
 				ScreenOrientation.LANDSCAPE_FIXED,
-				new FillResolutionPolicy(),
+				new RatioResolutionPolicy(16/9f),   // Ratio 16:9
 				mCamera);
 
 		// It is necessary in a lot of applications to define the following
@@ -92,6 +96,11 @@ public class MainActivity extends BaseGameActivity {
 		ResourceManager.getInstance().loadGameTextures(mEngine, this);
 		ResourceManager.getInstance().loadFonts(mEngine);
 
+		// Iniciamos la puntuación, fase, etc
+		GameManager.getInstance().resetGame();
+		
+		// Se crea el fichero de datos del usuario si no existe:
+		UserData.getInstance().init(ResourceManager.getInstance().context);
 
 		/* We should notify the pOnCreateResourcesCallback that we've finished
 		 * loading all of the necessary resources in our game AFTER they are loaded.
@@ -113,12 +122,18 @@ public class MainActivity extends BaseGameActivity {
 	@Override
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) {
 
-		mEngine.registerUpdateHandler(new FPSLogger());
+
+		
+		// mEngine.registerUpdateHandler(new FPSLogger());  ??? no se para que sirve esto :/
 
 		// Create the Scene object
 		mScene = new Scene();
 		mScene.getBackground().setColor(0.09804f, 0.6274f, 0.8784f);
-
+		
+		
+		mScene.setOnSceneTouchListener(this);  // Para "escuchar" la pantalla.
+		
+		
 		// Notify the callback that we're finished creating the scene, returning
 		// mScene to the mEngine object (handled automatically)
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
@@ -157,6 +172,16 @@ public class MainActivity extends BaseGameActivity {
 
 		mScene.attachChild(animatedSprite);	
 
+		
+		// Añadimos un clon superápido :D
+		animatedSpriteClon = new AnimatedSprite(WIDTH * 0.5f + 400, HEIGHT * 0.5f,
+				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager());
+		long frameDurationClon[] = { 20	, 40, 60 , 80, 100, 120 };
+		animatedSpriteClon.animate(frameDurationClon, firstTileIndex, lastTileIndex, loopAnimation);
+		mScene.attachChild(animatedSpriteClon);		
+
+		
+		
 
 		// Añadimos algo de texto:
 		final Text centerText = new Text(WIDTH * 0.5f, HEIGHT *0.3f, ResourceManager.getInstance().mFont,
@@ -176,6 +201,28 @@ public class MainActivity extends BaseGameActivity {
 	public void onUnloadResources () {
 		ResourceManager.getInstance().unloadGameTextures();
 		ResourceManager.getInstance().unloadFonts();
+	}
+
+
+
+
+
+	// Esto se ejecuta cuando se toca la pantalla:
+	// El clon superápido se mueve a donde toquemos, mientras sigue corriendo claro.....  :D
+	
+	@Override
+	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+		// TODO Auto-generated method stub
+		
+		float x = pSceneTouchEvent.getX();
+		float y = pSceneTouchEvent.getY();
+		
+		if(pSceneTouchEvent.isActionMove()){
+			animatedSpriteClon.setPosition(x,y);
+			return true;
+		}
+		
+		return false;
 	}
 
 

@@ -27,14 +27,22 @@ import android.util.Log;
 
 public class ResourceManager {
 
-	MainActivity activity;
-	Engine engine;
+
+	
 	
 	// ResourceManager Singleton instance
 	private static ResourceManager INSTANCE;
 	
 	/* The variables listed should be kept public, allowing us easy access
 	   to them when creating new Sprites, Text objects and to play sound files */
+	
+	
+	public MainActivity activity;
+	public Engine engine;
+	public Context context;
+	public float cameraWidth;
+	public float cameraHeight;
+	
 	
 	
 	public BuildableBitmapTextureAtlas mBitmapTextureAtlas;
@@ -54,11 +62,12 @@ public class ResourceManager {
 		
 		getInstance().activity = pActivity;
 		getInstance().engine = pEngine; 
-		
-/*		
 		getInstance().context = pContext;
 		getInstance().cameraWidth = pCameraWidth;
-		getInstance().cameraHeight = pCameraHeight;
+		getInstance().cameraHeight = pCameraHeight;		
+/*		
+
+		
 		getInstance().cameraScaleFactorX = pCameraScaleX;
 		getInstance().cameraScaleFactorY = pCameraScaleY;*/
 	}
