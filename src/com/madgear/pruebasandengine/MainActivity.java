@@ -35,6 +35,7 @@ public class MainActivity extends BaseGameActivity implements IOnSceneTouchListe
 	private Scene mScene;
 
 	AnimatedSprite animatedSpriteClon;
+	int r = 0;
 
 
 
@@ -219,6 +220,8 @@ public class MainActivity extends BaseGameActivity implements IOnSceneTouchListe
 		
 		if(pSceneTouchEvent.isActionMove()){
 			animatedSpriteClon.setPosition(x,y);
+			animatedSpriteClon.setRotation(r);
+			r = r+2;
 			return true;
 		}
 		
