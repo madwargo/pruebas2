@@ -190,13 +190,52 @@ public class MainActivity extends BaseGameActivity implements IOnSceneTouchListe
 		mScene.attachChild(animatedSprite);	
 
 		
-		// Añadimos un clon superápido :D
+		// Añadimos un clon superápido :D   Es una variable global por el tema de r (cutre para probar)
 		animatedSpriteClon = new AnimatedSprite(WIDTH * 0.5f + 400, HEIGHT * 0.5f,
 				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager());
 		long frameDurationClon[] = { 20	, 40, 60 , 80, 100, 120 };
 		animatedSpriteClon.animate(frameDurationClon, firstTileIndex, lastTileIndex, loopAnimation);
 		mScene.attachChild(animatedSpriteClon);		
 
+		
+		// Añadimos un clon que corre por la pantalla :D
+		AnimatedSprite animatedSpriteCorre = new AnimatedSprite(WIDTH * 0.5f + 400, HEIGHT * 0.5f,
+				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager()) {
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				
+				// Adjust our rectangles position
+				if(this.getX() < (WIDTH)){
+					// Increase the position by 5 pixels per update
+					this.setPosition(this.getX() + 5f, this.getY());
+				} else {
+					// Reset the rectangles X position and slightly increase the Y position
+					// If the rectangle exits camera view (width)
+					this.setPosition(-20, this.getY() + (100));
+				}
+				
+				// Reset to initial position if the rectangle exits camera view (height)
+				if(this.getY() > HEIGHT){
+					this.setPosition(0, 0);
+				}
+				
+/*				// If our rectangle is colliding, set the color to green if it's
+				// not already green
+				if(this.collidesWith(rectangleOne) && this.getColor() != Color.GREEN){
+					this.setColor(Color.GREEN);
+					
+				// If the shape is not colliding and not already red,
+				// reset the rectangle to red
+				} else if(this.getColor() != Color.RED){
+					this.setColor(Color.RED);
+				}*/
+				
+				// Pass the seconds elapsed to our update thread
+				super.onManagedUpdate(pSecondsElapsed);
+			}
+		};
+		animatedSpriteCorre.animate(frameDuration, firstTileIndex, lastTileIndex, loopAnimation);
+		mScene.attachChild(animatedSpriteCorre);			
 		
 		
 
