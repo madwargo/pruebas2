@@ -19,6 +19,8 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.adt.align.HorizontalAlign;
 
+import android.util.Log;
+
 
 
 public class MainActivity extends BaseGameActivity implements IOnSceneTouchListener {
@@ -156,7 +158,21 @@ public class MainActivity extends BaseGameActivity implements IOnSceneTouchListe
 
 		/* Create a new animated sprite in the center of the scene */
 		AnimatedSprite animatedSprite = new AnimatedSprite(WIDTH * 0.5f, HEIGHT * 0.5f,
-				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager());
+				ResourceManager.getInstance().mTiledTextureRegion, mEngine.getVertexBufferObjectManager()) {
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				Log.d("TIME", String.valueOf(pSecondsElapsed));
+				// Calculate rotation offset based on time passed
+				final float rotationOffset = pSecondsElapsed * 25;
+				
+				// Adjust this rectangle's rotation
+				this.setRotation(this.getRotation() + rotationOffset);
+				
+				// Pass the seconds elapsed to our update thread
+				super.onManagedUpdate(pSecondsElapsed);
+			}
+			
+		};
 
 		/* Length to play each frame before moving to the next */
 		long frameDuration[] = { 50	, 100, 150 , 200, 250, 300 };
@@ -221,7 +237,7 @@ public class MainActivity extends BaseGameActivity implements IOnSceneTouchListe
 		if(pSceneTouchEvent.isActionMove()){
 			animatedSpriteClon.setPosition(x,y);
 			animatedSpriteClon.setRotation(r);
-			r = r+2;
+			r = r-3;
 			return true;
 		}
 		
