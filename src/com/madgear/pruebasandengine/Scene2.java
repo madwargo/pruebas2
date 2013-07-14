@@ -10,7 +10,7 @@ import org.andengine.util.adt.align.HorizontalAlign;
 
 import android.util.Log;
 
-public class Scene1 extends ManagedScene implements IOnSceneTouchListener {
+public class Scene2 extends ManagedScene implements IOnSceneTouchListener {
 
 	public final boolean hasLoadingScreen = false;
 	
@@ -36,7 +36,7 @@ public class Scene1 extends ManagedScene implements IOnSceneTouchListener {
 		ResourceManager.getInstance().loadGameTextures(ResourceManager.getInstance().engine, ResourceManager.getInstance().context);
 		ResourceManager.getInstance().loadFonts(ResourceManager.getInstance().engine);
 		
-		getBackground().setColor(0.39804f, 0.6274f, 0.8784f);
+		getBackground().setColor(0.89804f, 0.0274f, 0.3784f);
 	}
 
 	@Override
@@ -123,7 +123,12 @@ public class Scene1 extends ManagedScene implements IOnSceneTouchListener {
 					this.setColor(Color.RED);
 				}*/
 				
-		
+				
+/*				// Si pasan 5 segundos vamos a la escena 1    :)
+				if(pSecondsElapsed > 5)
+					SceneManager.getInstance().showScene(new Scene1());*/
+				
+				
 				
 				// Pass the seconds elapsed to our update thread
 				super.onManagedUpdate(pSecondsElapsed);

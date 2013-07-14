@@ -55,6 +55,10 @@ public class ResourceManager {
 
 	public Font	mFont;
 
+	public float cameraScaleFactorX = 1;
+
+	public float cameraScaleFactorY = 1;
+
 	
 	// Inicializa el manejador
 	public static void setup(MainActivity pActivity, Engine pEngine, Context pContext, 
