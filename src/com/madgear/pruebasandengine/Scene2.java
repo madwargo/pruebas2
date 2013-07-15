@@ -17,6 +17,10 @@ public class Scene2 extends ManagedScene implements IOnSceneTouchListener {
 	AnimatedSprite animatedSpriteClon;
 	int r = 0;
 	
+	/* Variable which will accumulate time passed to
+	 * determine when to switch screens */
+	float timeCounter = 0;
+	
 	
 	@Override
 	public Scene onLoadingScreenLoadAndShown() {
@@ -122,13 +126,7 @@ public class Scene2 extends ManagedScene implements IOnSceneTouchListener {
 				} else if(this.getColor() != Color.RED){
 					this.setColor(Color.RED);
 				}*/
-				
-				
-/*				// Si pasan 5 segundos vamos a la escena 1    :)
-				if(pSecondsElapsed > 5)
-					SceneManager.getInstance().showScene(new Scene1());*/
-				
-				
+								
 				
 				// Pass the seconds elapsed to our update thread
 				super.onManagedUpdate(pSecondsElapsed);
@@ -186,7 +184,21 @@ public class Scene2 extends ManagedScene implements IOnSceneTouchListener {
 		return false;
 	}
 
-	
+	// Si pasan más de 4 segundos, entonces cambiamos de escena :)
+	@Override
+	protected void onManagedUpdate(float pSecondsElapsed) {
+		if (timeCounter >= 4) {
+			timeCounter = 0;
+			SceneManager.getInstance().showScene(new Scene1());
+			
+		}
+		timeCounter  += pSecondsElapsed;
+		
+		// Pass the seconds elapsed to our update thread
+		super.onManagedUpdate(pSecondsElapsed);
+		
+		
+		}
 	
 
 }
